@@ -2,7 +2,7 @@
 function loadPantryItemsFromBackend() {
     console.log('🔄 Trying to load pantry items...');
     
-    fetch('http://localhost:5000/api/pantry')
+    fetch('/api/pantry')
         .then(response => response.json())
         .then(result => {
             console.log('Backend response:', result);
@@ -205,7 +205,7 @@ document.addEventListener('submit', function(e) {
 // 🆕 NEW FUNCTION: Save item to backend
 async function saveItemToBackend(name, category, expiry, quantity) {
     try {
-        const response = await fetch('http://localhost:5000/api/pantry', {
+        const response = await fetch('/api/pantry', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -342,63 +342,92 @@ function startBarcodeDetection(video) {
     });
 }
 
-// Product database for common barcodes
-const productDatabase = {
-    // Sample barcodes (you can add real ones)
-    '1234567890128': { name: 'Milk', category: 'dairy' },
-    '2345678901231': { name: 'Eggs', category: 'dairy' },
-    '3456789012344': { name: 'Bread', category: 'grains' },
-    '4567890123457': { name: 'Tomatoes', category: 'vegetables' },
-    '5678901234560': { name: 'Chicken', category: 'meat' },
-    '6789012345673': { name: 'Yogurt', category: 'dairy' },
-    '7890123456786': { name: 'Butter', category: 'dairy' },
-    '8901234567899': { name: 'Orange Juice', category: 'fruits' },
-    '9012345678902': { name: 'Cooking Oil', category: 'other' }
-};
-
-function handleRealScannedBarcode(barcodeData, format) {
-    console.log(`Scanned: ${barcodeData} (Format: ${format})`);
+// 🆕 UNIVERSAL BARCODE LOOKUP WITH ONLINE API
+async function handleRealScannedBarcode(barcodeData, format) {
+    console.log(`📷 Scanned barcode: ${barcodeData}`);
     
     stopScanner();
     
-    // Look up product in database
-    const productInfo = productDatabase[barcodeData];
+    // Try to lookup product online using Open Food Facts API
+    const productInfo = await lookupProductOnline(barcodeData);
     
     if (productInfo) {
-        // Product found in database
+        // Product found online!
         showAddItemModal();
         setTimeout(() => {
             document.getElementById('itemName').value = productInfo.name;
             document.getElementById('itemCategory').value = productInfo.category;
             
-            // Set expiry date to tomorrow as default (user can change)
+            // Set expiry to tomorrow as default
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             document.getElementById('expiryDate').value = tomorrow.toISOString().split('T')[0];
             
             document.getElementById('itemQuantity').value = 1;
-            
-            // Focus on expiry field so user can easily change it
             document.getElementById('expiryDate').focus();
             
-            alert(`✅ Scanned: ${productInfo.name}\nPlease set the correct expiry date`);
+            alert(`✅ Found: ${productInfo.name}`);
         }, 100);
     } else {
-        // Unknown barcode
+        // Product not found - manual entry
         showAddItemModal();
         setTimeout(() => {
             document.getElementById('itemName').value = `Product (${barcodeData})`;
             document.getElementById('itemCategory').value = 'other';
             
-            // Set default expiry (tomorrow)
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             document.getElementById('expiryDate').value = tomorrow.toISOString().split('T')[0];
             
             document.getElementById('itemQuantity').value = 1;
-            document.getElementById('expiryDate').focus();
+            document.getElementById('itemName').focus();
+            
+            alert(`🔍 Product not found. Please enter details manually.`);
         }, 100);
     }
+}
+
+// 🆕 ONLINE PRODUCT LOOKUP FUNCTION
+async function lookupProductOnline(barcode) {
+    try {
+        console.log(`🔍 Looking up barcode ${barcode} online...`);
+        
+        const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+        const data = await response.json();
+        
+        if (data.status === 1 && data.product) {
+            // Product found!
+            const product = data.product;
+            return {
+                name: product.product_name || product.generic_name || 'Unknown Product',
+                category: getCategoryFromProduct(product)
+            };
+        }
+    } catch (error) {
+        console.error('Online lookup failed:', error);
+    }
+    return null;
+}
+
+// 🆕 SMART CATEGORY DETECTION
+function getCategoryFromProduct(product) {
+    const categories = product.categories || '';
+    const name = (product.product_name || '').toLowerCase();
+    
+    if (name.includes('milk') || name.includes('cheese') || name.includes('yogurt') || name.includes('butter') || categories.includes('dairy')) 
+        return 'dairy';
+    if (name.includes('egg') || categories.includes('eggs')) 
+        return 'dairy';
+    if (name.includes('bread') || name.includes('pasta') || name.includes('rice') || name.includes('cereal') || categories.includes('grains')) 
+        return 'grains';
+    if (name.includes('chicken') || name.includes('beef') || name.includes('pork') || name.includes('fish') || categories.includes('meat')) 
+        return 'meat';
+    if (name.includes('apple') || name.includes('banana') || name.includes('orange') || name.includes('berry') || categories.includes('fruits')) 
+        return 'fruits';
+    if (name.includes('tomato') || name.includes('carrot') || name.includes('potato') || name.includes('onion') || categories.includes('vegetables')) 
+        return 'vegetables';
+    
+    return 'other';
 }
 
 function stopScanner() {
@@ -416,7 +445,7 @@ function stopScanner() {
 
 // 🆕 ADD ITEM TO SHOPPING LIST
 function addToShoppingList(itemName) {
-    fetch('http://localhost:5000/api/shopping-list', {
+    fetch('/api/shopping-list', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -437,7 +466,7 @@ function addToShoppingList(itemName) {
 // 🆕 LOAD SHOPPING LIST FROM BACKEND
 async function loadShoppingListFromBackend() {
     try {
-        const response = await fetch('http://localhost:5000/api/shopping-list');
+        const response = await fetch('/api/shopping-list');
         const result = await response.json();
         
         if (result.success) {
@@ -504,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
 async function deletePantryItem(itemId, itemName) {
     if (confirm(`Are you sure you want to delete "${itemName}"?`)) {
         try {
-            const response = await fetch(`http://localhost:5000/api/pantry/${itemId}`, {
+            const response = await fetch(`/api/pantry/${itemId}`, {
                 method: 'DELETE'
             });
             
@@ -525,7 +554,7 @@ async function deletePantryItem(itemId, itemName) {
 async function deleteShoppingItem(itemId, itemName) {
     if (confirm(`Remove "${itemName}" from shopping list?`)) {
         try {
-            const response = await fetch(`http://localhost:5000/api/shopping-list/${itemId}`, {
+            const response = await fetch(`/api/shopping-list/${itemId}`, {
                 method: 'DELETE'
             });
             
@@ -725,4 +754,4 @@ function extractQuantity(line) {
     // Look for quantities like "2 MILK" or "MILK 2"
     const match = line.match(/(\d+)\s*[x@]?\s*[A-Z]/i) || line.match(/[A-Z]\s*(\d+)/i);
     return match ? parseInt(match[1]) : 1;
-}
+}     
