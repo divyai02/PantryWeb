@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantry+ Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🍳</div>
+                <h1>Pantry+</h1>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">👨‍🍳</div>
+                <div>
+                    <div class="user-name">Welcome, Chef!</div>
+                    <div class="user-status">Allergy Safe Mode: Active</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <div class="tab active" data-tab="overview">
+                <i class="fas fa-home"></i>Overview
+            </div>
+            <div class="tab" data-tab="pantry">
+                <i class="fas fa-utensils"></i>My Pantry
+            </div>
+            <div class="tab" data-tab="recipes">
+                <i class="fas fa-book"></i>Recipes
+            </div>
+            <div class="tab" data-tab="shopping">
+                <i class="fas fa-shopping-cart"></i>Shopping List
+            </div>
+            <div class="tab" data-tab="allergy">
+                <i class="fas fa-allergies"></i>Allergy Settings
+            </div>
+            <div class="tab" data-tab="reports">
+                <i class="fas fa-chart-bar"></i>Reports
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="dashboard-container">
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="overview">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-apple-alt"></i>
+                    <div class="stat-number">24</div>
+                    <div>Pantry Items</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-clock"></i>
+                    <div class="stat-number">3</div>
+                    <div>Expiring Soon</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-utensil-spoon"></i>
+                    <div class="stat-number">12</div>
+                    <div>Safe Recipes</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-heart"></i>
+                    <div class="stat-number">5</div>
+                    <div>Allergy Filters</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🚨 Expiry Alerts</h2>
+                </div>
+                <div class="alert-item expiring">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div style="margin-left: 15px;">
+                        <strong>Milk</strong> expires in 2 days!
+                    </div>
+                </div>
+                <div class="alert-item">
+                    <i class="fas fa-clock"></i>
+                    <div style="margin-left: 15px;">
+                        <strong>Eggs</strong> expire in 5 days
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">⭐ Recommended Safe Recipes</h2>
+                    <div class="allergy-status">
+                        <span class="allergy-tag">🥛 Dairy-Free</span>
+                        <span class="allergy-tag">🥜 Nut-Free</span>
+                    </div>
+                </div>
+                <div class="recipe-grid">
+                    <div class="recipe-card">
+                        <div class="recipe-image">🍝</div>
+                        <div class="recipe-content">
+                            <h3>Pasta Primavera</h3>
+                            <p>Uses 5 items from your pantry</p>
+                            
+                            <!-- NUTRITION INFO -->
+                            <div class="nutrition-info">
+                                <div class="nutrition-item">🔥 350 cal</div>
+                                <div class="nutrition-item">💪 15g protein</div>
+                                <div class="nutrition-item">🍚 45g carbs</div>
+                                <div class="nutrition-item">🥑 12g fat</div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn">View Recipe</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recipe-card">
+                        <div class="allergy-warning">⚠️ Contains Dairy</div>
+                        <div class="recipe-image">🧀</div>
+                        <div class="recipe-content">
+                            <h3>Cheese Pizza</h3>
+                            <p>Uses 6 items from your pantry</p>
+                            
+                            <!-- NUTRITION INFO -->
+                            <div class="nutrition-info">
+                                <div class="nutrition-item">🔥 420 cal</div>
+                                <div class="nutrition-item">💪 18g protein</div>
+                                <div class="nutrition-item">🍚 52g carbs</div>
+                                <div class="nutrition-item">🥑 16g fat</div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn" disabled>Not Safe</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantry Tab - FIXED STRUCTURE -->
+        <div class="tab-content" id="pantry">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🍎 My Pantry Items</h2>
+                    <div class="action-buttons">
+                        <button class="btn" id="addItemBtn"><i class="fas fa-plus"></i> Add Item</button>
+                        <button class="btn" id="scanItemBtn" style="background: var(--accent);">
+                            <i class="fas fa-barcode"></i> Scan Item
+                        </button>
+                    </div>
+                </div>
+                <div class="pantry-grid">
+                    <!-- Items will be loaded dynamically from JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipes Tab -->
+        <div class="tab-content" id="recipes">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📋 Recipe Suggestions</h2>
+                    <div>
+                        <button class="btn" id="filterBtn"><i class="fas fa-filter"></i> Filter Recipes</button>
+                    </div>
+                </div>
+                
+                <!-- Allergy Filter Section -->
+                <div class="allergy-filters" id="allergyFilters" style="display: none;">
+                    <div class="allergy-option">
+                        <input type="checkbox" id="dairy" checked>
+                        <span class="allergy-icon">🥛</span>
+                        <label for="dairy">Dairy Free</label>
+                    </div>
+                    <div class="allergy-option">
+                        <input type="checkbox" id="nuts" checked>
+                        <span class="allergy-icon">🥜</span>
+                        <label for="nuts">Nut Free</label>
+                    </div>
+                    <div class="allergy-option">
+                        <input type="checkbox" id="gluten">
+                        <span class="allergy-icon">🌾</span>
+                        <label for="gluten">Gluten Free</label>
+                    </div>
+                    <div class="allergy-option">
+                        <input type="checkbox" id="eggs">
+                        <span class="allergy-icon">🥚</span>
+                        <label for="eggs">Egg Free</label>
+                    </div>
+                </div>
+
+                <div class="recipe-grid">
+                    <div class="recipe-card safe-recipe">
+                        <div class="recipe-image">🥗</div>
+                        <div class="recipe-content">
+                            <h3>Fresh Garden Salad</h3>
+                            <p>Uses 7 pantry items • <span class="allergy-tag">Allergy Safe</span></p>
+                            
+                            <div class="nutrition-info">
+                                <div class="nutrition-item">🔥 280 cal</div>
+                                <div class="nutrition-item">💪 8g protein</div>
+                                <div class="nutrition-item">🍚 20g carbs</div>
+                                <div class="nutrition-item">🥑 18g fat</div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn">Cook This</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="recipe-card unsafe-recipe">
+                        <div class="allergy-warning">⚠️ Contains Nuts</div>
+                        <div class="recipe-image">🍫</div>
+                        <div class="recipe-content">
+                            <h3>Chocolate Brownies</h3>
+                            <p>Uses 5 pantry items • <span class="allergy-tag">Contains Nuts</span></p>
+                            
+                            <div class="nutrition-info">
+                                <div class="nutrition-item">🔥 320 cal</div>
+                                <div class="nutrition-item">💪 5g protein</div>
+                                <div class="nutrition-item">🍚 45g carbs</div>
+                                <div class="nutrition-item">🥑 15g fat</div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn" disabled>Not Safe</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shopping List Tab -->
+        <div class="tab-content" id="shopping">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🛒 Smart Shopping List</h2>
+                    <div class="action-buttons">
+                        <button class="btn" onclick="addManualShoppingItem()">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                        <button class="btn"><i class="fas fa-magic"></i> Auto-generate</button>
+                    </div>
+                </div>
+                <div class="shopping-list">
+                    <!-- Shopping items will be loaded from backend automatically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Allergy Settings Tab -->
+<div class="tab-content" id="allergy">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">⚡ Allergy & Preference Settings</h2>
+        </div>
+        
+        <div class="allergy-filters">
+            <div class="allergy-option">
+                <input type="checkbox" id="set-dairy" checked>
+                <span class="allergy-icon">🥛</span>
+                <label for="set-dairy"><strong>Avoid Dairy</strong><br><small>Milk, cheese, yogurt</small></label>
+            </div>
+            <div class="allergy-option">
+                <input type="checkbox" id="set-nuts" checked>
+                <span class="allergy-icon">🥜</span>
+                <label for="set-nuts"><strong>Avoid Nuts</strong><br><small>Peanuts, almonds, walnuts</small></label>
+            </div>
+            <div class="allergy-option">
+                <input type="checkbox" id="set-gluten">
+                <span class="allergy-icon">🌾</span>
+                <label for="set-gluten"><strong>Gluten Free</strong><br><small>Wheat, barley, rye</small></label>
+            </div>
+            <div class="allergy-option">
+                <input type="checkbox" id="set-eggs">
+                <span class="allergy-icon">🥚</span>
+                <label for="set-eggs"><strong>Egg Free</strong><br><small>All egg products</small></label>
+            </div>
+            <div class="allergy-option">
+                <input type="checkbox" id="set-seafood">
+                <span class="allergy-icon">🐟</span>
+                <label for="set-seafood"><strong>Seafood Free</strong><br><small>Fish, shellfish</small></label>
+            </div>
+            <div class="allergy-option">
+                <input type="checkbox" id="set-soy">
+                <span class="allergy-icon">🥢</span>
+                <label for="set-soy"><strong>Soy Free</strong><br><small>Tofu, soy sauce</small></label>
+            </div>
+            <!-- Custom allergies will be added here dynamically -->
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn" onclick="addNewAllergy()"><i class="fas fa-plus"></i> Add Allergy</button>
+            <button class="btn" onclick="saveAllPreferences()"><i class="fas fa-save"></i> Save All</button>
+            <button class="btn" onclick="clearAllPreferences()" style="background: #6c757d;"><i class="fas fa-broom"></i> Clear All</button>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">❤️ Dietary Preferences</h2>
+        </div>
+        
+        <div class="allergy-filters">
+            <div class="allergy-option">
+                <input type="checkbox" id="pref-vegetarian">
+                <span class="allergy-icon">🥕</span>
+                <label for="pref-vegetarian"><strong>Vegetarian</strong><br><small>No meat products</small></label>
+            </div>
+            <div class="allergy-option">
+                <input type="checkbox" id="pref-vegan">
+                <span class="allergy-icon">🌱</span>
+                <label for="pref-vegan"><strong>Vegan</strong><br><small>No animal products</small></label>
+            </div>
+            <div class="allergy-option">
+                <input type="checkbox" id="pref-lowcarb">
+                <span class="allergy-icon">🍗</span>
+                <label for="pref-lowcarb"><strong>Low Carb</strong><br><small>Keto-friendly</small></label>
+            </div>
+            <div class="allergy-option">
+                <input type="checkbox" id="pref-lowcal">
+                <span class="allergy-icon">⚖️</span>
+                <label for="pref-lowcal"><strong>Low Calorie</strong><br><small>Weight management</small></label>
+            </div>
+            <!-- Custom diets will be added here dynamically -->
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn" onclick="addNewDietPreference()"><i class="fas fa-plus"></i> Add Diet</button>
+        </div>
+    </div>
+</div>
+
+        <!-- Reports Tab -->
+        <div class="tab-content" id="reports">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📊 Monthly Health Report</h2>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-apple-alt"></i>
+                        <div class="stat-number">18</div>
+                        <div>Safe Meals Cooked</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-heart"></i>
+                        <div class="stat-number">100%</div>
+                        <div>Allergy Compliance</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-fire"></i>
+                        <div class="stat-number">2,150</div>
+                        <div>Avg Daily Calories</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <div class="stat-number">0</div>
+                        <div>Allergy Incidents</div>
+                    </div>
+                </div>
+                
+                <div class="nutrition-info" style="grid-template-columns: 1fr; text-align: center; margin: 20px 0;">
+                    <h3>🏆 Nutrition Summary</h3>
+                    <p>Average per meal: <strong>425 calories</strong> • <strong>22g protein</strong> • <strong>45g carbs</strong> • <strong>15g fat</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

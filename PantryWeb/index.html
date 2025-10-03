@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantry+ | Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #ffa36c);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .login-form {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .password-requirements {
+            background: #fff9db;
+            border-left: 4px solid #ffd43b;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            padding-left: 10px;
+        }
+
+        .password-requirements li {
+            margin: 5px 0;
+        }
+
+        .password-requirements li.valid {
+            color: #40c057;
+        }
+
+        .password-requirements li.valid::before {
+            content: "✓ ";
+            font-weight: bold;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa36c);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer-links a {
+            color: #ff6b6b;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 0.9em;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .food-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+
+        .food-icon {
+            font-size: 1.5em;
+        }
+
+        /* Animation for food icons */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .food-icon:hover {
+            animation: bounce 0.5s ease infinite;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+
+        /* Error message styling */
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="header">
+            <h1>🍳 Pantry+</h1>
+            <p>Your Smart Kitchen Assistant</p>
+        </div>
+        
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="username">👤 Username</label>
+                <input type="text" id="username" name="username" required 
+                       placeholder="Enter your username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">🔒 Password</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Enter your password" minlength="5">
+                
+                <div class="password-requirements">
+                    <strong>Password must contain:</strong>
+                    <ul>
+                        <li id="req-length">At least 5 characters</li>
+                        <li id="req-lowercase">One lowercase letter</li>
+                        <li id="req-uppercase">One uppercase letter</li>
+                        <li id="req-number">One number</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <button type="submit" class="login-btn">🍽️ Login to Pantry+</button>
+        </form>
+        
+        <div class="footer-links">
+            <a href="#">Forgot Password?</a>
+            <a href="#">Create Account</a>
+        </div>
+        
+        <div class="food-icons">
+            <span class="food-icon">🍎</span>
+            <span class="food-icon">🥦</span>
+            <span class="food-icon">🍞</span>
+            <span class="food-icon">🥩</span>
+            <span class="food-icon">🧀</span>
+        </div>
+    </div>
+
+    <script>
+        // Password validation
+        const passwordInput = document.getElementById('password');
+        const requirements = {
+            length: document.getElementById('req-length'),
+            lowercase: document.getElementById('req-lowercase'),
+            uppercase: document.getElementById('req-uppercase'),
+            number: document.getElementById('req-number')
+        };
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            
+            // Check each requirement
+            requirements.length.classList.toggle('valid', password.length >= 5);
+            requirements.lowercase.classList.toggle('valid', /[a-z]/.test(password));
+            requirements.uppercase.classList.toggle('valid', /[A-Z]/.test(password));
+            requirements.number.classList.toggle('valid', /[0-9]/.test(password));
+        });
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Basic validation
+            if (username.length < 3) {
+                alert('Username must be at least 3 characters long!');
+                return;
+            }
+            
+            if (password.length < 5 || 
+                !/[a-z]/.test(password) || 
+                !/[A-Z]/.test(password) || 
+                !/[0-9]/.test(password)) {
+                alert('Please meet all password requirements!');
+                return;
+            }
+            
+            window.location.href = 'login.html';
+            // Here you would redirect to the main dashboard
+            // window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>
