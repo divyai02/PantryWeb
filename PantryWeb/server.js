@@ -224,9 +224,9 @@ app.delete('/api/shopping-list/:id', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📦 Pantry API: http://localhost:${PORT}/api/pantry`);
-    console.log(`🛒 Shopping API: http://localhost:${PORT}/api/shopping-list`);
-    console.log(`⚡ Preferences API: http://localhost:${PORT}/api/preferences`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📦 Pantry API: /api/pantry`);
+    console.log(`🛒 Shopping API: /api/shopping-list`);
+    console.log(`⚡ Preferences API: /api/preferences`);
 });
