@@ -10,6 +10,17 @@ const PORT = 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+// Serve static files
+app.use(express.static('.'));
+
+// Routes for HTML pages
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+
+app.get('/dashboard', (req, res) => {
+    res.sendFile(__dirname + '/login.html');
+});
 
 // ==================== TEMPORARY STORAGE (No SQL yet) ====================
 
@@ -230,3 +241,4 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`🛒 Shopping API: /api/shopping-list`);
     console.log(`⚡ Preferences API: /api/preferences`);
 });
+
