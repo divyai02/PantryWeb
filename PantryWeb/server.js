@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const path = require('path'); // ADD THIS LINE
 
 const app = express();
 const PORT = 5000;
@@ -13,16 +14,24 @@ app.use(express.json());
 // Serve static files
 app.use(express.static('.'));
 
-// Routes for HTML pages
+// ==================== FIXED ROUTES ====================
+
+// Route for login page (index.html)
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Route for dashboard (login.html) - THIS WAS MISSING!
+app.get('/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// Route for dashboard alternative
 app.get('/dashboard', (req, res) => {
-    res.sendFile(__dirname + '/login.html');
+    res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-// ==================== TEMPORARY STORAGE (No SQL yet) ====================
+// ==================== TEMPORARY STORAGE ====================
 
 let pantryItems = [
     { id: 1, name: 'Milk', category: 'dairy', expiry: '2024-12-30', quantity: 1 },
@@ -38,7 +47,7 @@ let shoppingList = [
 
 let userPreferences = {
     allergies: ['dairy', 'nuts'],
-    diets: ['vegetarian']  // 🟢 CHANGED: 'diet' to 'diets'
+    diets: ['vegetarian']
 };
 
 // ==================== PANTRY ITEMS API ====================
@@ -116,11 +125,11 @@ app.get('/api/preferences', (req, res) => {
 });
 
 app.post('/api/preferences', (req, res) => {
-    const { allergies, diets } = req.body;  // 🟢 CHANGED: 'diet' to 'diets'
+    const { allergies, diets } = req.body;
     
     userPreferences = { 
         allergies: allergies || [], 
-        diets: diets || []  // 🟢 CHANGED: 'diet' to 'diets'
+        diets: diets || []
     };
     
     console.log('💾 Saved preferences:', userPreferences);
@@ -234,11 +243,17 @@ app.delete('/api/shopping-list/:id', (req, res) => {
     }
 });
 
+// ==================== CATCH-ALL ROUTE ====================
+// This serves your main app for any route not defined above
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📦 Pantry API: /api/pantry`);
     console.log(`🛒 Shopping API: /api/shopping-list`);
     console.log(`⚡ Preferences API: /api/preferences`);
+    console.log(`📱 Access from phone: http://YOUR-IP:${PORT}`);
 });
-
