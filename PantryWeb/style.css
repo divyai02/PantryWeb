@@ -30,6 +30,47 @@ body {
     position: relative;
     overflow: hidden;
 }
+/* ADD THIS TO YOUR style.css */
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.edit-btn {
+    background: #74b9ff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.edit-btn:hover {
+    background: #0984e3;
+    transform: translateY(-2px);
+}
+
+.delete-btn {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.delete-btn:hover {
+    background: #ff5252;
+    transform: translateY(-2px);
+}
 
 .header-content {
     display: flex;
@@ -584,4 +625,5 @@ body {
     flex: 1;
     margin: 0;
     cursor: pointer;
+
 }
