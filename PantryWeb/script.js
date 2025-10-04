@@ -209,7 +209,7 @@ function createIngredientCard(name, category, expiry, quantity, itemId) {
     
     const icon = icons[category] || '🍎';
     
-    // Create the new card HTML WITH DELETE BUTTON
+    // Create the new card HTML WITH EDIT & DELETE BUTTONS
     const newCardHTML = `
         <div class="ingredient-card ${diffDays <= 3 ? 'expiring' : ''}">
             <div class="ingredient-icon">${icon}</div>
@@ -217,9 +217,15 @@ function createIngredientCard(name, category, expiry, quantity, itemId) {
             <p>Expires: ${diffDays} days</p>
             <p>Qty: ${quantity}</p>
             <span class="allergy-tag">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
-            <button class="delete-btn" onclick="deletePantryItem(${itemId}, '${name}')">
-                <i class="fas fa-trash"></i> Delete
-            </button>
+            
+            <div class="action-buttons">
+                <button class="edit-btn" onclick="showEditModal(${itemId}, '${name.replace(/'/g, "\\'")}', '${category}', '${expiry}', ${quantity})">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="delete-btn" onclick="deletePantryItem(${itemId}, '${name}')">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
         </div>
     `;
     
@@ -227,6 +233,89 @@ function createIngredientCard(name, category, expiry, quantity, itemId) {
     const pantryGrid = document.querySelector('.pantry-grid');
     if (pantryGrid) {
         pantryGrid.insertAdjacentHTML('beforeend', newCardHTML);
+    }
+}
+
+// 🆕 EDIT MODAL FUNCTION
+function showEditModal(itemId, currentName, currentCategory, currentExpiry, currentQuantity) {
+    const modalHTML = `
+        <div class="modal-overlay" id="editItemModal" style="display: flex;">
+            <div class="modal-content">
+                <h3>✏️ Edit Item</h3>
+                <form id="editItemForm">
+                    <input type="text" id="editItemName" value="${currentName}" placeholder="Item Name" required>
+                    
+                    <select id="editItemCategory">
+                        <option value="dairy" ${currentCategory === 'dairy' ? 'selected' : ''}>🥛 Dairy</option>
+                        <option value="vegetables" ${currentCategory === 'vegetables' ? 'selected' : ''}>🥦 Vegetables</option>
+                        <option value="fruits" ${currentCategory === 'fruits' ? 'selected' : ''}>🍎 Fruits</option>
+                        <option value="meat" ${currentCategory === 'meat' ? 'selected' : ''}>🍗 Meat</option>
+                        <option value="grains" ${currentCategory === 'grains' ? 'selected' : ''}>🍞 Grains</option>
+                        <option value="beverages" ${currentCategory === 'beverages' ? 'selected' : ''}>🥤 Beverages</option>
+                        <option value="other" ${currentCategory === 'other' ? 'selected' : ''}>📦 Other</option>
+                    </select>
+                    
+                    <input type="date" id="editExpiryDate" value="${currentExpiry}" required>
+                    <input type="number" id="editItemQuantity" value="${currentQuantity}" min="1" max="100">
+                    
+                    <div class="modal-buttons">
+                        <button type="submit" class="btn" style="flex: 1;">💾 Save Changes</button>
+                        <button type="button" onclick="closeEditModal()" class="btn" style="background: #6c757d; flex: 1;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Add form submit listener
+    document.getElementById('editItemForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById('editItemName').value;
+        const category = document.getElementById('editItemCategory').value;
+        const expiry = document.getElementById('editExpiryDate').value;
+        const quantity = document.getElementById('editItemQuantity').value;
+        
+        updatePantryItem(itemId, name, category, expiry, quantity);
+        closeEditModal();
+    });
+}
+
+// 🆕 CLOSE EDIT MODAL
+function closeEditModal() {
+    const modal = document.getElementById('editItemModal');
+    if (modal) modal.remove();
+}
+
+// 🆕 UPDATE PANTRY ITEM
+async function updatePantryItem(itemId, name, category, expiry, quantity) {
+    try {
+        const response = await fetch(`/api/pantry/${itemId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: name,
+                category: category,
+                expiry: expiry,
+                quantity: quantity
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showSuccessMessage(`✅ ${result.message}`);
+            loadPantryItemsFromBackend(); // Refresh the list
+        } else {
+            showErrorMessage('❌ Failed to update item');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showErrorMessage('❌ Could not connect to server');
     }
 }
 
@@ -880,5 +969,3 @@ function guessCategory(productName) {
 
 function extractQuantity(line) {
     const match = line.match(/(\d+)\s*[x@]?\s*[A-Z]/i) || line.match(/[A-Z]\s*(\d+)/i);
-    return match ? parseInt(match[1]) : 1;
-}
