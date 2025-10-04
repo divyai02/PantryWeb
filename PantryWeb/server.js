@@ -79,6 +79,37 @@ app.post('/api/pantry', (req, res) => {
     });
 });
 
+// 🆕 UPDATE PANTRY ITEM - ADDED FOR EDIT FUNCTIONALITY
+app.put('/api/pantry/:id', (req, res) => {
+    const itemId = parseInt(req.params.id);
+    const { name, category, expiry, quantity } = req.body;
+    
+    console.log('✏️ Updating item ID:', itemId);
+    
+    const itemIndex = pantryItems.findIndex(item => item.id === itemId);
+    
+    if (itemIndex !== -1) {
+        pantryItems[itemIndex] = {
+            ...pantryItems[itemIndex],
+            name,
+            category,
+            expiry,
+            quantity: parseInt(quantity) || 1
+        };
+        
+        res.json({
+            success: true,
+            message: `Item "${name}" updated successfully!`,
+            item: pantryItems[itemIndex]
+        });
+    } else {
+        res.json({
+            success: false,
+            message: 'Item not found!'
+        });
+    }
+});
+
 // ==================== SHOPPING LIST API ====================
 
 app.get('/api/shopping-list', (req, res) => {
@@ -246,4 +277,5 @@ app.listen(PORT, () => {
     console.log(`📦 Pantry API: /api/pantry`);
     console.log(`🛒 Shopping API: /api/shopping-list`);
     console.log(`⚡ Preferences API: /api/preferences`);
+    console.log(`✏️ Edit API: /api/pantry/:id (PUT)`); // 🆕 ADDED
 });
