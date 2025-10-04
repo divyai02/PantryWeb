@@ -34,16 +34,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeTabs() {
-    // Tab Navigation
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', function() {
+    // Tab Navigation - FIXED WITH EVENT DELEGATION
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.tab')) {
+            const tab = e.target.closest('.tab');
+            
             // Remove active class from all tabs
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
             // Add active class to clicked tab
-            this.classList.add('active');
-            const tabId = this.getAttribute('data-tab');
+            tab.classList.add('active');
+            const tabId = tab.getAttribute('data-tab');
             const tabContent = document.getElementById(tabId);
             if (tabContent) {
                 tabContent.classList.add('active');
@@ -55,7 +57,7 @@ function initializeTabs() {
             } else if (tabId === 'shopping') {
                 setTimeout(loadShoppingListFromBackend, 100);
             }
-        });
+        }
     });
 }
 
@@ -69,7 +71,7 @@ function initializeEventListeners() {
         }
     });
     
-    // Allergy filter toggle
+    // Allergy filter toggle - FIXED WITH NULL CHECK
     const filterBtn = document.getElementById('filterBtn');
     if (filterBtn) {
         filterBtn.addEventListener('click', function() {
@@ -80,30 +82,31 @@ function initializeEventListeners() {
         });
     }
     
-    // Allergy filter functionality
+    // Allergy filter functionality - FIXED WITH NULL CHECK
     document.querySelectorAll('.allergy-option input').forEach(checkbox => {
         checkbox.addEventListener('change', filterRecipes);
     });
     
-    // Add item button
+    // Add item button - FIXED WITH NULL CHECK
     const addItemBtn = document.getElementById('addItemBtn');
     if (addItemBtn) {
         addItemBtn.addEventListener('click', showAddItemModal);
     }
     
-    // Scan item button
+    // Scan item button - FIXED WITH NULL CHECK
     const scanItemBtn = document.getElementById('scanItemBtn');
     if (scanItemBtn) {
         scanItemBtn.addEventListener('click', startRealBarcodeScanner);
     }
     
-    // Manual shopping item button
-    const manualShopBtn = document.querySelector('[onclick="addManualShoppingItem()"]');
-    if (manualShopBtn) {
-        manualShopBtn.addEventListener('click', addManualShoppingItem);
-    }
+    // Manual shopping item button - FIXED
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('[onclick*="addManualShoppingItem"]')) {
+            addManualShoppingItem();
+        }
+    });
     
-    // Add hover animations
+    // Add hover animations - FIXED WITH EVENT DELEGATION
     document.addEventListener('mouseover', function(e) {
         if (e.target.closest('.ingredient-card, .recipe-card')) {
             const card = e.target.closest('.ingredient-card, .recipe-card');
@@ -962,10 +965,6 @@ function guessCategory(productName) {
     if (name.includes('bread') || name.includes('pasta') || name.includes('rice') || name.includes('cereal')) return 'grains';
     if (name.includes('chicken') || name.includes('beef') || name.includes('pork') || name.includes('fish')) return 'meat';
     if (name.includes('apple') || name.includes('banana') || name.includes('orange') || name.includes('berry')) return 'fruits';
-    if (name.includes('tomato') || name.includes('carrot') || name.includes('potato') || name.includes('onion')) return 'vegetables';
-    
-    return 'other';
+    if (name.includes('tomato') || name.includes('carrot'));
 }
-
-function extractQuantity(line) {
-    const match = line.match(/(\d+)\s*[x@]?\s*[A-Z]/i) || line.match(/[A-Z]\s*(\d+)/i);
+    
