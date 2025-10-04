@@ -3,31 +3,26 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const path = require('path'); // ADD THIS LINE
+const path = require('path');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000; // ✅ IMPORTANT FOR RENDER
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 // Serve static files
-app.use(express.static('.'));
+app.use(express.static(path.join(__dirname)));
 
-// ==================== FIXED ROUTES ====================
+// ==================== ROUTES ====================
 
-// Route for login page (index.html)
+// Route for login page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Route for dashboard (login.html) - THIS WAS MISSING!
+// Route for dashboard
 app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
-});
-
-// Route for dashboard alternative
-app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
@@ -67,16 +62,14 @@ app.post('/api/pantry', (req, res) => {
     
     console.log('📦 Adding item:', { name, category, expiry, quantity });
     
-    // Create new item
     const newItem = {
-        id: Date.now(), // Simple ID generation
+        id: Date.now(),
         name,
         category, 
         expiry,
         quantity: parseInt(quantity) || 1
     };
     
-    // Add to temporary storage
     pantryItems.push(newItem);
     
     res.json({
@@ -148,7 +141,6 @@ app.post('/api/scan-barcode', (req, res) => {
     
     console.log('📷 Scanning barcode:', barcode);
     
-    // Simulate barcode lookup
     const productDatabase = {
         '1234567890128': { name: 'Milk', category: 'dairy' },
         '2345678901231': { name: 'Eggs', category: 'dairy' },
@@ -175,7 +167,6 @@ app.post('/api/scan-barcode', (req, res) => {
 // ==================== RECIPES API ====================
 
 app.get('/api/recipes', (req, res) => {
-    // Simple recipe suggestions based on pantry items
     const recipes = [
         { 
             id: 1, 
@@ -243,17 +234,16 @@ app.delete('/api/shopping-list/:id', (req, res) => {
     }
 });
 
-// ==================== CATCH-ALL ROUTE ====================
-// This serves your main app for any route not defined above
-app.get('*', (req, res) => {
+// ==================== FIXED CATCH-ALL ROUTE ====================
+// Use this instead of the problematic '*' route
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Start server
-app.listen(PORT, '0.0.0.0', () => {
+// Start server - REMOVED '0.0.0.0' for Render
+app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📦 Pantry API: /api/pantry`);
     console.log(`🛒 Shopping API: /api/shopping-list`);
     console.log(`⚡ Preferences API: /api/preferences`);
-    console.log(`📱 Access from phone: http://YOUR-IP:${PORT}`);
 });
